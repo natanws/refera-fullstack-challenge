@@ -1,0 +1,18 @@
+.table-header {
+  background-color: #007aff;
+}
+
+.table-header .table-label {
+  color: #ffffff;
+}
+
+span.css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root.Mui-active, 
+.table-header .table-label:hover {
+  color: #f5f5f5;
+  font-weight: bold;
+}
+
+svg.css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root.Mui-active .MuiTableSortLabel-icon {
+  background-color: #ffffff;
+  color: #ffffff;
+}
