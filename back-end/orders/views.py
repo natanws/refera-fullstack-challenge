@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -6,9 +7,7 @@ from rest_framework.views import APIView
 
 from categories.models import Categories
 from orders.models import Order
-from orders.serializers import (OrderPatchSerializer,
-                                OrderSerializer)
-
+from orders.serializers import OrderPatchSerializer, 'OrderSerializer
 
 class OrdersView(APIView):
     def post(self, request: Request):
@@ -57,7 +56,6 @@ class SingleOrderView(APIView):
             serializer.validated_data['category'] = category
 
         Order.objects.filter(id=id).update(**serializer.validated_data)
-        
         order = Order.objects.filter(id=id).first()
         
         serializer = OrderPatchSerializer(order)
