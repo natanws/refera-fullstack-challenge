@@ -2,50 +2,362 @@
 
 ## Description
 
-Welcome to Refera's Fullstack code challenge! The goal of this challenge is to create a web application to manage maintanence orders from Refera, following the **Acceptance criteria**. The frontend of application has only one page and the backend contains a simple REST API service and has a connection with a database. By the end of the challenge, we will be able to create new orders and list them through the web application that comunicates with our backend service to read and store the data in a database.
+This application was made using React and Django.
 
-We use React and Django in our real application, feel comfortable to chose the appropriate technology you are familiar with. Elaborate briefly the architectural decisions, design patterns and frameworks you used on your solution.
+In this application the user can create orders for maintenance of real estate, update orders, retrieve them and delete. The categories feature is accessible through the front end only to retrieve categories already added to the database.
 
+There is no authentication layer in this project. But it could be created using authtoken from django's rest framework library. Here are the steps necessary:
 
-## Resources
+- A model for users
+- Password hashing service
+- Register endpoint
+- Utilize Django's authtoken to generate a token
+- A middleware to verify if the user's token is valid or expired
+- Login endpoint
+- Protection for private endpoints
 
-![image](https://user-images.githubusercontent.com/10841710/141149769-d2bef978-7073-4ac7-b0af-6c0c8c7b6fe8.png)
+Currently there are two tables in the database, Orders and Categories. To create a structure to support storage of real estate agencies, companies and contacts it would be required to change the structure of all tables, except for Categories:
 
+### Real estate agency
+- Relation on this table to contacts
+- Relation to orders created by the agency
+- Ratings
+### Company
+- With a table of users, there would need to be a relation to users
+- Assuming that companies would have one account only, storing hashed password and access information
+- Ratings
+### Contacts
+- All the contacts data
+### Orders
+- Relation to orders accepted by companies
+- Removing most data stored here and using pivot tables to make relations N-N
+# How to run it
 
-## Acceptance criteria
+## Back end
 
-- Provide clear instructions on how to run the application in development mode
-- Provide clear instructions on how the application would run in a production environment
-- Describe how you would implement an authentication layer for the web application (don't need to implement)
-- RESTful API allowing CRUD and list operations on the orders
-  - Endpoint to create/retrieve/update/delete order
-  - Endpoint to list order
-- RESTful API allowing CRUD operations on the categories
-  - Endpoint to create/retrieve/update/delete category
-  - Endpoint to list categories
-- Database to store data from the following resources
-  - Order
-  - Category
-- Describe how you would structure the database to account for 
-  - Real estate agency registration data
-  - Company registration data
-  - Contact registration data
-  - Describe what needs to be changed on the API you implemented
-- One web page, following the low fidelity prototype presented on the **Resources**
-  - Table with orders data, allowing the user to order the results by each column
-  - Button to open modal to create new order
-  - Allow row click to open modal to visualize order details
-- Modal to input data to create new order
-  - Form with appropriate inputs to handle each type of data
-  - Allow selection of registered categories from the database
-  - Save button to hit backend service and store the data
-- Modal to read only the order details
+From the project root, you should access the back end folder, create your virtual environment and initialize it. Then install all dependencies.
 
-## Challenge guidelines
+```
+cd back-end                       <-- Access back end folder
+python -m venv venv               <-- Create virtual environment
+source venv/bin/activate          <-- Initialize the virtual environment
+pip install -r requirements.txt   <-- Install dependencies
+```
 
-- The usage of git will be taken into consideration on the evaluation
-- For this challenge, **Create** a repository in your Github account
-- You can create a private repository in your account if you want
-- If your repository is private, share your repository with email: suporte@refera.com.br
-- Send a email with the link of your repository to: suporte@refera.com.br
-- Remenber, all the written information requested on **Acceptance criteria** should be added on a README.md file inside the your repository
+Then make your migrations, migrate them and run the server.
+
+```
+python manage.py makemigrations   <-- Create migrations
+python manage.py migrate          <-- Migrate DB
+python manage.py runserver        <-- Run server
+```
+## Front end
+
+From the project root, access the front end folder and install all dependencies.
+
+```
+cd front-end                      <-- Access the front end folder
+yarn                              <-- Install dependencies
+yarn start                        <-- Start project
+```
+
+# API
+
+### Base URL for hosting locally
+http://localhost:8000/api
+
+## Create Order 
+### `POST - /orders`
+
+Request example:
+
+```json
+{
+  {
+    "contact_name": "Marcos",
+    "contact_phone": "51991006915",
+    "real_estate_agency": "Imobiliaria Certeira",
+    "order_description": "Necessito de um eletricista para problemas elétricos sendo apresentados nas tomadas do apartamento.",
+    "company": "Empresa Trivial",
+    "category": {
+      "name": "Elétrica"
+    },
+    "deadline": "2022-05-03T00:00:00-05:00"
+  }
+}
+```
+Expected response:
+
+`201 - CREATED`
+```json
+{
+  "id": 1,
+  "contact_name": "Marcos",
+  "contact_phone": "51991006915",
+  "real_estate_agency": "Imobiliaria Certeira",
+  "order_description": "Necessito de um eletricista para problemas elétricos sendo apresentados nas tomadas do apartamento.",
+  "company": "Empresa Trivial",
+  "category": {
+    "id": 1,
+    "name": "Elétrica"
+  },
+  "deadline": "2022-05-03T00:00:00-05:00"
+}
+```
+
+Possible errors:
+
+`400 - BAD REQUEST`
+```json
+{
+  "contact_name": [
+    "This field is required."
+  ],
+  "contact_phone": [
+    "This field is required."
+  ],
+  "real_estate_agency": [
+    "This field is required."
+  ],
+  "order_description": [
+    "This field is required."
+  ],
+  "company": [
+    "This field is required."
+  ],
+  "deadline": [
+    "This field is required."
+  ],
+  "category": [
+    "This field is required."
+  ]
+}
+```
+```json
+{
+  "contact_name": [
+    "Not a valid string."
+  ]
+}
+```
+
+## Get Orders
+### `GET - /orders`
+
+`no body`
+
+Expected response:
+
+`200 - OK`
+
+```json
+{
+  "orders": [
+    {
+      "id": 1,
+      "contact_name": "Marcos",
+      "contact_phone": "51991006915",
+      "real_estate_agency": "Imobiliaria Certeira",
+      "order_description": "Necessito de um eletricista para problemas elétricos sendo apresentados nas tomadas do apartamento.",
+      "company": "Empresa Trivial",
+      "category": {
+        "id": 1,
+        "name": "Elétrica"
+      },
+      "deadline": "2022-05-03T00:00:00-05:00"
+    }  
+  ]
+}
+```
+## Get Single Orders
+### `GET - /orders/<id>`
+
+`no body`
+
+Expected response:
+
+`200 - OK`
+
+```json
+{
+  "order": {
+    "id": 1,
+    "contact_name": "Marcos",
+    "contact_phone": "51991006915",
+    "real_estate_agency": "Imobiliaria Certeira",
+    "order_description": "Necessito de um eletricista para problemas elétricos sendo apresentados nas tomadas do apartamento.",
+    "company": "Empresa Trivial",
+    "category": {
+      "id": 1,
+      "name": "Elétrica"
+    },
+    "deadline": "2022-05-03T00:00:00-05:00"
+  }  
+}
+```
+
+## Patch Order
+
+### `PATCH - /orders/<id>`
+
+Request example:
+
+```json
+{
+  "contact_name": "Fred"
+}
+```
+
+Expected response:
+
+`200 - OK`
+```json
+{
+  "message": "Order updated",
+  "order": {
+    "id": 1,
+    "contact_name": "Fred",
+    "contact_phone": "51991006915",
+    "real_estate_agency": "Imobiliaria Certeira",
+    "order_description": "Necessito de um eletricista para problemas elétricos sendo apresentados nas tomadas do apartamento.",
+    "company": "Empresa Trivial",
+    "category": {
+      "id": 1,
+      "name": "Elétrica"
+    },
+    "deadline": "2022-05-03T00:00:00-05:00"
+  }
+}
+```
+
+## Delete Order
+
+### `DELETE - /orders/<id>`
+
+`no body`
+
+Expected response:
+
+`200 - OK`
+
+```json
+{
+  "order": {
+    "id": 1,
+    "contact_name": "Fred",
+    "contact_phone": "51991006915",
+    "real_estate_agency": "Imobiliaria Certeira",
+    "order_description": "Necessito de um eletricista para problemas elétricos sendo apresentados nas tomadas do apartamento.",
+    "company": "Empresa Trivial",
+    "category": {
+      "id": 1,
+      "name": "Elétrica"
+    },
+    "deadline": "2022-05-03T00:00:00-05:00"
+  }  
+}
+```
+
+## Create Category
+### `POST - /categories`
+
+Request example:
+
+```json
+{
+  "name": "Hidráulica"
+}
+```
+
+Expected resposne:
+
+`201 - CREATED`
+
+```json
+{
+  "id": 2,
+  "name": "Hidráulica"
+}
+```
+## Get Categories
+### `GET - /categories`
+
+`no body`
+
+Expected resposne:
+
+`200 - OK`
+
+```json
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Elétrica"
+    },
+    {
+      "id": 2,
+      "name": "Hidráulica"
+    }
+  ]
+}
+```
+## Get Single Categories
+### `GET - /categories/<id>`
+
+`no body`
+
+Expected resposne:
+
+`200 - OK`
+
+```json
+{
+  "category": {
+    "id": 2,
+    "name": "Hidráulica"
+  }
+}
+```
+
+## Patch Category
+
+### `PATCH - /categories/<id>`
+
+Request example:
+
+```json
+{
+	"name": "Infiltração"
+}
+```
+
+Expected response:
+`200 - OK`
+
+```json
+{
+  "message": "Category updated",
+  "category": {
+    "name": "Infiltração"
+  }
+}
+```
+
+## Delete Category
+
+### `DELETE - /categories/<id>`
+
+`no body`
+
+Expected response:
+
+```json
+{
+  "message": "Category deleted",
+  "category": {
+    "id": null,
+    "name": "Infiltração"
+  }
+}
+```
