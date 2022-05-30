@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from categories.models import Categories
 from orders.models import Order
-from orders.serializers import OrderPatchSerializer, 'OrderSerializer
+from orders.serializers import OrderPatchSerializer, OrderSerializer
 
 class OrdersView(APIView):
     def post(self, request: Request):
