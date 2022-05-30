@@ -1,0 +1,30 @@
+[
+  {
+    "model": "categories.Categories",
+    "pk": 1,
+    "fields": {
+      "name": "Elétrica"
+    }
+  },
+  {
+    "model": "categories.Categories",
+    "pk": 2,
+    "fields": {
+      "name": "Hidráulica"
+    }
+  },
+  {
+    "model": "categories.Categories",
+    "pk": 3,
+    "fields": {
+      "name": "Infiltração"
+    }
+  },
+  {
+    "model": "categories.Categories",
+    "pk": 4,
+    "fields": {
+      "name": "Retirada de mobília"
+    }
+  }
+]
