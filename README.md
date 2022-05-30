@@ -38,27 +38,28 @@ Currently there are two tables in the database, Orders and Categories. To create
 From the project root, you should access the back end folder, create your virtual environment and initialize it. Then install all dependencies.
 
 ```
-cd back-end                       <-- Access back end folder
-python -m venv venv               <-- Create virtual environment
-source venv/bin/activate          <-- Initialize the virtual environment
-pip install -r requirements.txt   <-- Install dependencies
+cd back-end                                               <-- Access back end folder
+python -m venv venv                                       <-- Create virtual environment
+source venv/bin/activate                                  <-- Initialize the virtual environment
+pip install -r requirements.txt                           <-- Install dependencies
 ```
 
-Then make your migrations, migrate them and run the server.
+Then make your migrations, migrate them, populate categories table and run the server.
 
 ```
-python manage.py makemigrations   <-- Create migrations
-python manage.py migrate          <-- Migrate DB
-python manage.py runserver        <-- Run server
+python manage.py makemigrations                           <-- Create migrations
+python manage.py migrate                                  <-- Migrate DB
+python manage.py loaddata fixtures/categories_data.json   <-- Populate categories table
+python manage.py runserver                                <-- Run server
 ```
 ## Front end
 
 From the project root, access the front end folder and install all dependencies.
 
 ```
-cd front-end                      <-- Access the front end folder
-yarn                              <-- Install dependencies
-yarn start                        <-- Start project
+cd front-end                                              <-- Access the front end folder
+yarn                                                      <-- Install dependencies
+yarn start                                                <-- Start project
 ```
 
 # API
