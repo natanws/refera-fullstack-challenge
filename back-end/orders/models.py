@@ -1,5 +1,6 @@
 from django.db import models
 
+from categories.models import Categories
 
 class Order(models.Model):
   contact_name = models.CharField(max_length=50)
@@ -7,6 +8,7 @@ class Order(models.Model):
   real_estate_agency = models.CharField(max_length=50)
   order_description = models.TextField()
   company = models.CharField(max_length=50)
-  category = models.CharField(max_length=25)
   deadline = models.DateTimeField()
+
+  category = models.ForeignKey('categories.Categories', on_delete=models.CASCADE, related_name='orders')
   
